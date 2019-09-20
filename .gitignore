@@ -1,5 +1,6 @@
 bin
 pkg
-src
+!src/json
+!src/web_service
 
 .vscode
