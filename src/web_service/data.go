@@ -20,3 +20,19 @@ func retrieve(id int) (post Post, err error) {
 	err = Db.QueryRow("select id, content, author from posts where id =$1", id).Scan(&post.ID, &post.Content, &post.Author)
 	return
 }
+
+func (post *Post) create() (err error) {
+	statement := "insert into posts (content, author) values ($1, $2) returning id"
+	stmt, err := Db.Prepare(statement)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+	err = stmt.QueryRow(post.Content, post.Author).Scan(&post.ID)
+	return
+}
+
+func (post *Post) delete() (err error) {
+	_, err = Db.Exec("delete from posts where id = $1", post.ID)
+	return
+}
