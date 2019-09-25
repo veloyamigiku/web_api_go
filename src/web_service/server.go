@@ -21,6 +21,9 @@ func main() {
 	server := http.Server {
 		Addr: ":8080",
 	}
+	// http.HandleFuncは、マルチプレクサ（リクエストをハンドラ関数にリダイレクトするコード）にハンドラ関数を割り当てる。
+	// http.Handleは、マルチプレクサに「ハンドラ」を割り当てる。
+	// ※ハンドラは、ServeHTTPメソッドを持つ構造体を指す。
 	http.HandleFunc("/post/", handleRequest)
 	// HTTPサーバを作成する。
 	// 第1引数は、ネットワークアドレスを指定する。
@@ -29,6 +32,7 @@ func main() {
 
 }
 
+// ハンドラ関数(引数にResponseWriterとRequestのポインタを持つ)
 func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 	var err error
@@ -43,6 +47,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		err = handleDelete(w, r)
 	}
 	if err != nil {
+		// 
 		http.Error(
 			w,
 			err.Error(),
@@ -52,6 +57,9 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGet(w http.ResponseWriter, r *http.Request) (err error) {
+	// strconv.Atoiは、引数の文字列を整数に変換する。
+	// path.Baseは、引数のURL文字列をスラッシュで区切った最後の要素を返却する。
+	// http.Request.URL.Pathは、リクエストURLのパス部分を返却する。
 	id, err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return
@@ -60,25 +68,35 @@ func handleGet(w http.ResponseWriter, r *http.Request) (err error) {
 	if err != nil {
 		return
 	}
+	// 
 	output, err := json.MarshalIndent(&post, "", "\t")
 	if err != nil {
 		return
 	}
+	// 
 	w.Header().Set("Content-Type", "application/json")
+	// 
 	w.Write(output)
 	return
 }
 
 func handlePost(w http.ResponseWriter, r *http.Request) (err error) {
+	// http.Request.ContentLengthは、リクエストボディのサイズをバイト数で返却する。
 	len := r.ContentLength
+	// 組み込み関数makeは、スライスを作成する。
+	// 第1引数は、型（[]int, []byte, etc）を指定する。
+	// 第2引数は、長さを指定する。
 	body := make([]byte, len)
+	// http.Request.Body[io.Reader].Readは、リクエストボディを読み込んでバッファ（スライス）に保存する。
 	r.Body.Read(body)
 	var post Post
+	// json.Unmarshalは、JSON形式のデータ（byte配列）を指定の型に変換する。
 	json.Unmarshal(body, &post)
 	err = post.create()
 	if err != nil {
 		return
 	}
+	// ResponseWriter.WriteHeaderは、引数のステータスコードでレスポンスヘッダを送信する。
 	w.WriteHeader(200)
 	return
 }
