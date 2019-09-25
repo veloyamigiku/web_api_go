@@ -16,6 +16,7 @@ type Post struct {
 
 func main() {
 
+	// 変数の宣言＆代入。
 	server := http.Server {
 		Addr: ":8080",
 	}

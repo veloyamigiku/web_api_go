@@ -21,6 +21,8 @@ func retrieve(id int) (post Post, err error) {
 	return
 }
 
+// 構造体Postのメソッド。
+// テーブルpostsに投稿を登録する。
 func (post *Post) create() (err error) {
 	statement := "insert into posts (content, author) values ($1, $2) returning id"
 	stmt, err := Db.Prepare(statement)
