@@ -17,10 +17,14 @@ type Post struct {
 func main() {
 
 	// 変数の宣言＆代入。
+	// Server構造体を生成する。
 	server := http.Server {
 		Addr: ":8080",
 	}
 	http.HandleFunc("/post/", handleRequest)
+	// HTTPサーバを作成する。
+	// 第1引数は、ネットワークアドレスを指定する。
+	// 第2引数は、受付ポート番号を指定する。
 	server.ListenAndServe()
 
 }
