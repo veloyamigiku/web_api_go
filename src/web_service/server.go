@@ -47,10 +47,15 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		err = handleDelete(w, r)
 	}
 	if err != nil {
-		// 
+		// http.Errorは、指定のエラーメッセージとステータスコードをクライアントに返却する。
+		// 第1引数は、ResponseWriterを指定する。
+		// 第2引数は、エラーメッセージを指定する。。
+		// 第3引数は、ステータスコードを指定する。
 		http.Error(
 			w,
+			// Errorは、エラーメッセージを返却する。
 			err.Error(),
+			// StatusInternalServerErrorは、ステータスコード（500）の定数。
 			http.StatusInternalServerError)
 		return
 	}
@@ -68,7 +73,10 @@ func handleGet(w http.ResponseWriter, r *http.Request) (err error) {
 	if err != nil {
 		return
 	}
-	// 
+	// json.MarshalIndentは、インターフェースをJSON形式のデータ（バイト配列）に変換する。
+	// 第1引数は、変換元のインタフェースを指定する。
+	// 第2引数は、(動作確認後に記載予定。)
+	// 第3引数は、JSON形式のデータを整形するインデントを指定する。
 	output, err := json.MarshalIndent(&post, "", "\t")
 	if err != nil {
 		return
