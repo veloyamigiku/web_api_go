@@ -81,9 +81,10 @@ func handleGet(w http.ResponseWriter, r *http.Request) (err error) {
 	if err != nil {
 		return
 	}
-	// 
+	// ResponseWriter.Headerは、Headerデータを参照する。
+	// Header.Setは、ヘッダ名と値を設定する。
 	w.Header().Set("Content-Type", "application/json")
-	// 
+	// HTTPの応答として、HTTP接続に対してバイト配列を書き込む。
 	w.Write(output)
 	return
 }
