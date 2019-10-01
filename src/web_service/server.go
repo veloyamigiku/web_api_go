@@ -16,6 +16,16 @@ type Post struct {
 
 func main() {
 
+	/*
+	// トークン発行のサンプルコード
+	dir := getCurrentDir()
+	privatePath := dir + "/key/private"
+	tokenString, err := issueToken(privatePath)
+	if err != nil {
+		panic(err)	
+	}
+	*/
+
 	// 変数の宣言＆代入。
 	// Server構造体を生成する。
 	server := http.Server {
