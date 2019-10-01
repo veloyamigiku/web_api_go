@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	jwt "github.com/dgrijalva/jwt-go"
 )
