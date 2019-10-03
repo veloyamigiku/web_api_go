@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	//"fmt"
 	"net/http"
 	"path"
 	"strconv"
@@ -24,6 +25,14 @@ func main() {
 	if err != nil {
 		panic(err)	
 	}
+	fmt.Println("tokenString:" + tokenString)
+	publicPath := dir + "/key/public"
+	res, err := validateToken(tokenString, publicPath)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Print("res:")
+	fmt.Println(res)
 	*/
 
 	// 変数の宣言＆代入。
