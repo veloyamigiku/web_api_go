@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	//"fmt"
+	"fmt"
 	"net/http"
 	"path"
 	"strconv"
@@ -17,23 +17,23 @@ type Post struct {
 
 func main() {
 
-	/*
+	
 	// トークン発行のサンプルコード
 	dir := getCurrentDir()
 	privatePath := dir + "/key/private"
-	tokenString, err := issueToken(privatePath)
+	token, err := issueToken(privatePath)
 	if err != nil {
 		panic(err)	
 	}
-	fmt.Println("tokenString:" + tokenString)
+	fmt.Println("tokenString:" + token.Token)
 	publicPath := dir + "/key/public"
-	res, err := validateToken(tokenString, publicPath)
+	res, err := validateToken(token.Token, publicPath)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Print("res:")
 	fmt.Println(res)
-	*/
+	
 
 	// 変数の宣言＆代入。
 	// Server構造体を生成する。
@@ -44,10 +44,65 @@ func main() {
 	// http.Handleは、マルチプレクサに「ハンドラ」を割り当てる。
 	// ※ハンドラは、ServeHTTPメソッドを持つ構造体を指す。
 	http.HandleFunc("/post/", handleRequest)
+	http.HandleFunc("/login/", handleLoginRequest)
+
 	// HTTPサーバを作成する。
 	// 第1引数は、ネットワークアドレスを指定する。
 	// 第2引数は、受付ポート番号を指定する。
 	server.ListenAndServe()
+
+}
+
+func handleLoginRequest(w http.ResponseWriter, r *http.Request) {
+
+	// ユーザーの存在を確認する。
+	r.ParseForm()
+	//fmt.Println(r.Form)
+	if _, ok := r.PostForm["user"]; !ok {
+		http.Error(
+			w,
+			"user param is not found.",
+			http.StatusInternalServerError)
+		return
+	}
+	// 外部サービス等を利用して、ユーザ名の存在を確認する。
+	user := r.PostForm["user"][0]
+	if user != "root" {
+		http.Error(
+			w,
+			"user is invalie.",
+			http.StatusInternalServerError)
+		return
+	}
+	
+	// 外部サービス等を利用して、ハッシュ化したユーザパスワードを取得する。
+
+	// ユーザパスワードを検証する。
+
+
+	// JWT（トークン）を発行する。
+	currentDir := getCurrentDir()
+	privatePath := currentDir + "/key/private"
+	token, err := issueToken(privatePath)
+	if err != nil {
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError)
+		return
+	}
+
+	// 発行したJWT（トークン）をJSON形式で出力する。
+	w.Header().Set("Content-Type", "application/json")
+	jsonString, err := json.MarshalIndent(token, "", "\t")
+	if err != nil {
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusInternalServerError)
+		return
+	}
+	w.Write(jsonString)
 
 }
 

@@ -7,18 +7,24 @@ import (
 	"time"
 )
 
-func issueToken(privatePath string) (string, error) {
+// トークンの構造体
+type Token struct {
+	Token string `json:"token"`
+}
 
+func issueToken(privatePath string) (Token, error) {
+
+	t := Token{}
 	// ReadFileは、指定のファイルを読み込んで、byte配列で返却する。
 	privateBytes, err := ioutil.ReadFile(privatePath)
 	if err != nil {
-		return "", err
+		return t, err
 	}
 
 	// jwt.ParseRSAPrivateKeyFromPEMは、PEMエンコードされた秘密鍵（PKCS1,PKCS8）をパースして、byte配列で返却する。
 	privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(privateBytes)
 	if err != nil {
-		return "", err
+		return t, err
 	}
 
 	// jwt.Newは、署名アルゴリズムを指定してトークンを作成する。
@@ -35,10 +41,11 @@ func issueToken(privatePath string) (string, error) {
 	// SignedStringは、秘密鍵を元にトークン文字列を作成する。
 	tokenString, err := token.SignedString(privateKey)
 	if err != nil {
-		return "", err
+		return t, err
 	}
 
-	return tokenString, nil
+	t.Token = tokenString
+	return t, nil
 	
 }
 
