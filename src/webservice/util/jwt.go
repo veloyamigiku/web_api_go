@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ type Token struct {
 	Token string `json:"token"`
 }
 
-func issueToken(privatePath string) (Token, error) {
+func IssueToken(privatePath string) (Token, error) {
 
 	t := Token{}
 	// ReadFileは、指定のファイルを読み込んで、byte配列で返却する。
@@ -49,7 +49,7 @@ func issueToken(privatePath string) (Token, error) {
 	
 }
 
-func validateToken(tokenString string, publicPath string) (bool, error) {
+func ValidateToken(tokenString string, publicPath string) (bool, error) {
 
 	publicBytes, err := ioutil.ReadFile(publicPath)
 	if err != nil {

@@ -6,28 +6,22 @@ import (
 	"net/http"
 	"path"
 	"strconv"
+	"webservice/data"
+	"webservice/util"
 )
-
-// 送受信するJSONに対する構造体（投稿）。
-type Post struct {
-	ID int `json:"id"`
-	Content string `json:"content"`
-	Author string `json:"author"`
-}
 
 func main() {
 
-	
 	// トークン発行のサンプルコード
-	dir := getCurrentDir()
+	dir := util.GetCurrentDir()
 	privatePath := dir + "/key/private"
-	token, err := issueToken(privatePath)
+	token, err := util.IssueToken(privatePath)
 	if err != nil {
 		panic(err)	
 	}
 	fmt.Println("tokenString:" + token.Token)
 	publicPath := dir + "/key/public"
-	res, err := validateToken(token.Token, publicPath)
+	res, err := util.ValidateToken(token.Token, publicPath)
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +51,6 @@ func handleLoginRequest(w http.ResponseWriter, r *http.Request) {
 
 	// ユーザーの存在を確認する。
 	r.ParseForm()
-	//fmt.Println(r.Form)
 	if _, ok := r.PostForm["user"]; !ok {
 		http.Error(
 			w,
@@ -77,13 +70,14 @@ func handleLoginRequest(w http.ResponseWriter, r *http.Request) {
 	
 	// 外部サービス等を利用して、ハッシュ化したユーザパスワードを取得する。
 
+
 	// ユーザパスワードを検証する。
 
 
 	// JWT（トークン）を発行する。
-	currentDir := getCurrentDir()
+	currentDir := util.GetCurrentDir()
 	privatePath := currentDir + "/key/private"
-	token, err := issueToken(privatePath)
+	token, err := util.IssueToken(privatePath)
 	if err != nil {
 		http.Error(
 			w,
@@ -143,7 +137,8 @@ func handleGet(w http.ResponseWriter, r *http.Request) (err error) {
 	if err != nil {
 		return
 	}
-	post, err := retrieve(id)
+	
+	post, err := data.Retrieve(id)
 	if err != nil {
 		return
 	}
@@ -172,10 +167,10 @@ func handlePost(w http.ResponseWriter, r *http.Request) (err error) {
 	body := make([]byte, len)
 	// http.Request.Body[io.Reader].Readは、リクエストボディを読み込んでバッファ（スライス）に保存する。
 	r.Body.Read(body)
-	var post Post
+	var post data.Post
 	// json.Unmarshalは、JSON形式のデータ（byte配列）を指定の型に変換する。
 	json.Unmarshal(body, &post)
-	err = post.create()
+	err = post.Create()
 	if err != nil {
 		return
 	}
@@ -189,7 +184,7 @@ func handlePut(w http.ResponseWriter, r *http.Request) (err error) {
 	if err != nil {
 		return
 	}
-	post, err := retrieve(id)
+	post, err := data.Retrieve(id)
 	if err != nil {
 		return
 	}
@@ -197,7 +192,7 @@ func handlePut(w http.ResponseWriter, r *http.Request) (err error) {
 	body := make([]byte, len)
 	r.Body.Read(body)
 	json.Unmarshal(body, &post)
-	err = post.update()
+	err = post.Update()
 	if err != nil {
 		return
 	}
@@ -211,11 +206,11 @@ func handleDelete(w http.ResponseWriter, r *http.Request) (err error) {
 	if err != nil {
 		return
 	}
-	post, err := retrieve(id)
+	post, err := data.Retrieve(id)
 	if err != nil {
 		return
 	}
-	err = post.delete()
+	err = post.Delete()
 	if err != nil {
 		return
 	}

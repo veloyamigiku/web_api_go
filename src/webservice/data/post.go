@@ -1,26 +1,13 @@
-package main
+package data
 
-import (
-	"database/sql"
-	// PostgreSQLのドライバをインポートする。
-	_ "github.com/lib/pq"
-)
-
-// 
-var Db *sql.DB
-
-func init() {
-	var err error
-	// DBをオープンする。
-	// 第1引数は、データベースドライバの名前を指定する。
-	// 第2引数は、データソース名を指定する。
-	Db, err = sql.Open("postgres", "host=web_api_postgres user=gwp password=gwp dbname=gwp sslmode=disable")
-	if err != nil {
-		panic(err)
-	}
+// 送受信するJSONに対する構造体（投稿）。
+type Post struct {
+	ID int `json:"id"`
+	Content string `json:"content"`
+	Author string `json:"author"`
 }
 
-func retrieve(id int) (post Post, err error) {
+func Retrieve(id int) (post Post, err error) {
 	post = Post {}
 	// DB.QueryRowは、SQLクエリを実行する。
 	// 第1引数は、SQLクエリの文字列を指定する。
@@ -32,7 +19,7 @@ func retrieve(id int) (post Post, err error) {
 
 // 構造体Postのメソッド。
 // テーブルpostsに投稿を登録する。
-func (post *Post) create() (err error) {
+func (post *Post) Create() (err error) {
 	statement := "insert into posts (content, author) values ($1, $2) returning id"
 	// DB.Prepareは、引数のSQLクエリを元にStmt（プリペアードステートメント）を作成する。
 	stmt, err := Db.Prepare(statement)
@@ -44,7 +31,7 @@ func (post *Post) create() (err error) {
 	return
 }
 
-func (post *Post) update() (err error) {
+func (post *Post) Update() (err error) {
 	// DB.Execは、指定のSQLクエリを実行する。（行結果は返却しない）
 	// 第1引数は、SQLクエリを指定する。
 	// 第2引数以降は、SQLクエリ内の変数に割り当てる値を指定する。
@@ -52,7 +39,7 @@ func (post *Post) update() (err error) {
 	return
 }
 
-func (post *Post) delete() (err error) {
+func (post *Post) Delete() (err error) {
 	_, err = Db.Exec("delete from posts where id = $1", post.ID)
 	return
 }

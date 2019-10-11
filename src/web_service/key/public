@@ -1,1 +1,0 @@
-openssl rsa -in private -pubout -out public

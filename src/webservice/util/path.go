@@ -1,11 +1,11 @@
-package main
+package util
 
 import (
 	"path"
 	"runtime"
 )
 
-func getCurrentDir() (string) {
+func GetCurrentDir() (string) {
 	_, filename, _, _ := runtime.Caller(1)
 	return path.Dir(filename)
 }
