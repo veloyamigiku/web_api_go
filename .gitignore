@@ -4,3 +4,5 @@ pkg
 !src/web_service
 
 .vscode
+
+vendor
