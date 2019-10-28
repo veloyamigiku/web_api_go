@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -9,8 +10,18 @@ import (
 
 // Repository 構造体（リポジトリ）。
 type Repository struct {
-	ID int
-	Name string
+	ID int `json:"id"`
+	Name string `json:"name"`
+}
+
+// リポジトリ検索結果（JSONオブジェクト）をJSON文字列に変換する。
+func marshalSearchRepository(repositories []Repository) (jsonString string, err error) {
+	jsonBytes, err := json.Marshal(repositories)
+	if err != nil {
+		return
+	}
+	jsonString = string(jsonBytes)
+	return
 }
 
 // リポジトリ検索結果文字列（JSON）をパースして、各リポジトリのIDと名前を配列形式で返却する。
